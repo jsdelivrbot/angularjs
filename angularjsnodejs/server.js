@@ -7,7 +7,7 @@ var morgan = require('morgan');
 var methodOverride = require('method-override');
 
 //Conexion a la base de datos
-mongoose.connect('mongodb://localhost:27017/angularjsnodejs', { useMongoClient: false });
+mongoose.connect('mongodb://localhost:27017/angularjsnodejs', { useMongoClient: true });
 
 mongoose.connection.on('error', (err) => {
     console.log(err);
@@ -15,7 +15,9 @@ mongoose.connection.on('error', (err) => {
 //Configuracion
 
 //Localizacion de ficheros estaticos
-app.use(serverStatic(__dirname + '/public', { 'index': ['index.html', 'index.htm'] }));
+app.use(serverStatic(__dirname + '/public'));
+
+app.use('/node_modules', serverStatic(__dirname + '/node_modules'));
 
 //Muestra un log de todos los request
 app.use(morgan('dev'));
@@ -23,10 +25,6 @@ app.use(morgan('dev'));
 //Permite cambiar el HTML por el metodo POST
 app.use(bodyParser.urlencoded({
     extended: true
-}))
-
-app.use(bodyParser.raw({
-    type: "*/*"
 }));
 
 app.use(bodyParser.json());
@@ -49,14 +47,41 @@ app.get('/api/tareas', (req, res) => {
 });
 
 app.post('/api/tareas', (req, res) => {
+    // var nuevo = new todo({
+    //     text: req.body.text,
+    //     done: false
+    // });
+
+    // nuevo.save((error) => {
+    //     if (error) res.send(error);
+
+    //     res.json(nuevo);
+    // });
+
     todo.create({
         text: req.body.text,
         done: false
-    }).then(tarea => {
-        res.json(tarea);
-    }).catch(err => {
-        res.send(err);
+    }, (error, data) => {
+        if (error) res.send(error);
+
+        res.json(data);
     })
+});
+
+app.delete('/api/tareas/:tarea', (req, res) => {
+    todo.remove({
+        _id: req.params.tarea
+    }, (error, data) => {
+        if (error) res.send(error);
+
+        todo.find((err, tareas) => {
+            res.json(tareas);
+        });
+    })
+});
+
+app.get('*', function (req, res) {
+    res.sendfile('./public/index.html');
 });
 
 app.listen('8081', () => {
