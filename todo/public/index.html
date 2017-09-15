@@ -9,16 +9,16 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
 </head>
 
-<body ng-controller="mainController">
+<body ng-controller="mainController as vm">
     <div class="container">
         <!--Cabecera-->
         <div class="jumbotron text-center">
-            <h1>Rok33r Tasks List <span class="alert alert-primary">{{ tasks.length }}</span></h1>
+            <h1>Rok33r Tasks List <span class="alert alert-primary">{{ vm.tasks.length }}</span></h1>
         </div>
         <!--Formulario para insertar nuevas tasks-->
         <button class="btn btn-primary mx-auto" data-toggle="modal" data-target="#addTaskModal">Add</button>
         <div class="modal fade" id="addTaskModal" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-dialog modal-lg" role="document" ng-form="register">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Add task</h5>
@@ -30,21 +30,21 @@
                         <form class="col-12">
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Name:</label>
-                                <input type="text" class="form-control col-sm-10 input" placeholder="Ej. Push git" ng-model="formData.name">
+                                <input type="text" class="form-control col-sm-10 input" placeholder="Ej. Push git" ng-model="vm.formData.name" required>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Date:</label>
-                                <input type="date" class="form-control col-sm-10 input" placeholder="Due date" ng-model="formData.dueDate">
+                                <input type="date" class="form-control col-sm-10 input" placeholder="Due date" ng-model="vm.formData.dueDate" required>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label">Priority:</label>
-                                <input type="number" min="1" max="10" class="form-control col-sm-10 input" placeholder="Priority" ng-model="formData.priority">
+                                <input type="number" min="1" max="10" class="form-control col-sm-10 input" placeholder="Priority" ng-model="vm.formData.priority" required>
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button class="btn btn-primary" ng-click="createTask()" data-dismiss="modal">Save</button>
+                        <button class="btn btn-primary" ng-click="vm.createTask()" data-dismiss="modal" ng-disabled="register.$invalid">Save</button>
                     </div>
                 </div>
             </div>
@@ -55,10 +55,10 @@
                 <div class="card">
                     <h4 class="card-header">Pendding</h4>
                     <div class="card-body">
-                        <div class="card" ng-repeat="task in tasks | filter: taskPendding">
+                        <div class="card" ng-repeat="task in vm.tasks | filter: vm.taskPendding">
                             <div class="card-header">
                                 <h5 class="float-left">{{ task.priority }}</h5>&nbsp; {{ task.name }}
-                                <button type="button" class="close" style="margin-left: 10px; line-height: 0.8" ng-click="deleteTask(task.id)">
+                                <button type="button" class="close" style="margin-left: 10px; line-height: 0.8" ng-click="vm.deleteTask(task.id)">
                                     <span aria-hidden="true">&times;</span>
                                     </button>
                                 <strong class="float-right">{{ task.dueDate | date }}</strong>
@@ -71,10 +71,10 @@
                 <div class="card">
                     <h4 class="card-header">Overdue</h4>
                     <div class="card-body">
-                        <div class="card" ng-repeat="task in tasks | filter: taskOverdue">
+                        <div class="card" ng-repeat="task in vm.tasks | filter: vm.taskOverdue">
                             <div class="card-header text-danger">
                                 <h5 class="float-left">{{ task.priority }}</h5>&nbsp; {{ task.name }}
-                                <button type="button" class="close" style="margin-left: 10px; line-height: 0.8" ng-click="deleteTask(task.id)">
+                                <button type="button" class="close" style="margin-left: 10px; line-height: 0.8" ng-click="vm.deleteTask(task.id)">
                                 <span aria-hidden="true">&times;</span>
                                 </button>
                                 <strong class="float-right">{{ task.dueDate | date }}</strong>
