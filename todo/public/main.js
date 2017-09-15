@@ -1,39 +1,50 @@
-angular.module('angularjsnodejs', []);
-
-angular.module('angularjsnodejs').controller('mainController', mainController);
+angular.module('angularjsnodejs', []).controller('mainController', mainController);
 
 function mainController($scope, $http) {
     $scope.formData = {};
+    $scope.tasks = [];
 
-    // Cuando se cargue la página, pide del API tareas las tareas
-    $http.get('/api/tareas')
+    $http.get('https://glacial-savannah-46887.herokuapp.com/task')
         .then(function (data) {
-            $scope.tareas = data.data;
+            $scope.tasks = data.data;
             console.log(data)
         }, function (data) {
-            console.log('Error: ' + data);
+            console.error('Error: ', data);
         });
 
-    // Cuando se añade un nueva TAREA, manda el texto a la API
-    $scope.createTarea = function () {
-        $http.post('/api/tareas', $scope.formData)
-            .then(function (data) {
+    $scope.createTask = function () {
+        $scope.formData.id = $scope.tasks.length + 1;
+        $http.post('https://glacial-savannah-46887.herokuapp.com/task/create', $scope.formData)
+            .then((data) => {
                 $scope.formData = {};
-                $scope.tareas.push(data.data);
+                $scope.tasks.push(data.data);
                 console.log(data);
-            }, function (data) {
-                console.log('Error:' + data);
+            }, (data) => {
+                console.log(`Error`, data);
             });
     };
 
-    // Borra una TAREA despues de checkearlo como acabado
-    $scope.deleteTarea = function (id) {
-        $http.delete('/api/tareas/' + id)
-            .then(function (data) {
-                $scope.tareas = data.data;
+    $scope.deleteTask = function (id) {
+        $http.get(`https://glacial-savannah-46887.herokuapp.com/task/destroy/${id}`)
+            .then((data) => {
+                $scope.tasks = $scope.tasks.filter((task) => {
+                    return task.id != id;
+                });
                 console.log(data);
-            }, function (data) {
-                console.log('Error:' + data);
+            }, (data) => {
+                console.error(`Error:`, data);
             });
     };
+
+    $scope.taskPendding = function (task) {
+        var currentDate = new Date();
+        currentDate.setHours(0,0,0,0);
+        return new Date(task.dueDate) >= currentDate;
+    }
+
+    $scope.taskOverdue = function (task) {
+        var currentDate = new Date();
+        currentDate.setHours(0,0,0,0);
+        return new Date(task.dueDate) < currentDate;
+    }
 }
