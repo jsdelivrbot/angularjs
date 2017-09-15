@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en" ng-app="angularjsnodejs">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+</head>
+
+<body ng-controller="mainController">
+    <div class="container">
+        <!--Cabecera-->
+        <div class="jumbotron text-center">
+            <h1>Angular tareas List <span class="label label-info">{{ tareas.length }}</span></h1>
+        </div>
+        <!--Lista de tareas-->
+        <div id="tares-list" class="row">
+            <div class="col-sm-4 col-sm-offset-4">
+                <div class="checkbox" ng-repeat="tarea in tareas">
+                    <label>
+                        <input type="checkbox" ng-click="deleteTarea(tarea._id)"> {{ tarea.text }} 
+                    </label>
+                </div>
+            </div>
+        </div>
+        <!--Formulario para insertar nuevas Tareas-->
+        <div id="tareas-form" class="row">
+            <div class="col-sm-8 col-sm-offset-2 text-center">
+                <form>
+                    <div class="form-group">
+                        <input type="text" class="form-control input-lg text-center" placeholder="Inserta una tarea nueva" ng-model="formData.text">
+                    </div>
+                    <button class="btn btn-primary btn-lg" ng-click="createTarea()">Añadir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/node_modules/angular/angular.min.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>
